@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Link } from "react-router-dom";
-import { Clock, Users, BookOpen } from "lucide-react";
+import { Clock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Course {
   id: string;
@@ -14,52 +15,63 @@ interface Course {
   joinUrl?: string;
 }
 
-const COURSES: Course[] = [
-  {
-    id: "1",
-    name: "Sistem Informasi (TI-3A)",
-    instructor: "Dr. Miftakhurrokhmat",
-    icon: "📋",
-    color: "from-blue-400 to-blue-600",
-    status: "LIVE",
-    time: "08:00-10:00",
-    joinUrl: "/course/1",
-  },
-  {
-    id: "2",
-    name: "Basis Data (TI-3A)",
-    instructor: "Dr. Miftakhurrokhmat",
-    icon: "💾",
-    color: "from-green-400 to-green-600",
-    status: "Selesaiakses",
-    time: "10:20-12:00",
-  },
-  {
-    id: "3",
-    name: "Kecerdasan Buatan (TI-3A)",
-    instructor: "Dr. Miftakhurrokhmat",
-    icon: "🤖",
-    color: "from-purple-400 to-purple-600",
-    status: "Sedang diakses",
-    time: "12:20-14:00",
-  },
-];
-
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("jadwal");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const { user } = useAuth();
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/dashboard");
+      const data = await response.json();
+
+      if (data.success && data.courses) {
+        const formattedCourses: Course[] = data.courses.map((course: any) => ({
+          ...course,
+          joinUrl: course.status === "LIVE" ? `/course/${course.id}` : undefined,
+        }));
+        setCourses(formattedCourses);
+      } else {
+        setError("Failed to load courses");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load dashboard");
+      console.error("Dashboard fetch error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!user) {
+    return null;
+  }
 
   return (
-    <DashboardLayout currentUser={{ name: "Minato", email: "minato@smartlecture.com" }}>
+    <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Welcome Section */}
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-gray-900">
-            Halo, Minato! 👋
+            Halo, {user.name}! 👋
           </h1>
           <p className="text-gray-600">
             Semangat belajar hari ini, jangan lupa fokus yah!
           </p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-4 border-b border-gray-200">

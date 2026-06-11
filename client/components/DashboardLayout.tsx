@@ -1,17 +1,29 @@
 import React, { useState } from "react";
 import { Menu, X, User, Bell, Settings, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  currentUser?: { name: string; email: string };
 }
 
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
-  children,
-  currentUser = { name: "Minato", email: "minato@smartlecture.com" },
-}) => {
+export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const navItems = [
     {
@@ -61,19 +73,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </nav>
 
         {/* User Info */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-              {currentUser.name[0]}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 text-sm truncate">
-                {currentUser.name}
-              </p>
-              <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
+        {user && (
+          <div className="p-4 border-t border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                {user.name[0]}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-gray-900 text-sm truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </aside>
 
       {/* Main Content */}
@@ -94,13 +108,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div className="flex-1 hidden md:block"></div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Notifications">
               <Bell className="w-5 h-5 text-gray-600" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Settings">
               <Settings className="w-5 h-5 text-gray-600" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Logout"
+            >
               <LogOut className="w-5 h-5 text-gray-600" />
             </button>
           </div>
