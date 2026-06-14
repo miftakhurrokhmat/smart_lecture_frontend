@@ -117,7 +117,7 @@ export default function Dashboard() {
               </h3>
 
               <div className="grid grid-cols-1 gap-4">
-                {COURSES.map((course) => (
+                {courses.map((course) => (
                   <div
                     key={course.id}
                     className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
