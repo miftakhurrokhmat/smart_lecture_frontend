@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Bell, HelpCircle, Home, User, LogOut } from "lucide-react";
+import {
+  Bell,
+  HelpCircle,
+  Home,
+  User,
+  LogOut,
+  Calendar,
+  GraduationCap,
+  BookOpen,
+  Users,
+} from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -11,6 +21,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
 }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,15 +35,70 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       console.error("Logout failed:", error);
     } finally {
       setIsLoggingOut(false);
+      setShowLogoutConfirm(false);
     }
   };
 
-  const navItems = [
-    { icon: Home, label: "Beranda", href: "/dashboard" },
-    { icon: User, label: "Profile", href: "/profile" },
-  ];
-
-  const isActive = (href: string) => location.pathname === href;
+  const navItems =
+    user?.role === "admin"
+      ? [
+          {
+            icon: Home,
+            label: "Beranda",
+            href: "/admin/dashboard",
+          },
+          {
+            icon: GraduationCap,
+            label: "Dosen",
+            href: "/admin/dosen",
+          },
+          {
+            icon: Users,
+            label: "Mahasiswa",
+            href: "/admin/mahasiswa",
+          },
+          {
+            icon: BookOpen,
+            label: "Mata Kuliah",
+            href: "/admin/matakuliah",
+          },
+          {
+            icon: User,
+            label: "Profile",
+            href: "/admin/profile",
+          },
+        ]
+      : user?.role === "dosen"
+        ? [
+            {
+              icon: Home,
+              label: "Beranda",
+              href: "/dosen/dashboard",
+            },
+            {
+              icon: Calendar,
+              label: "Jadwal",
+              href: "/dosen/jadwal",
+            },
+            {
+              icon: User,
+              label: "Profile",
+              href: "/dosen/profile",
+            },
+          ]
+        : [
+            {
+              icon: Home,
+              label: "Beranda",
+              href: "/dashboard",
+            },
+            {
+              icon: User,
+              label: "Profile",
+              href: "/profile",
+            },
+          ];
+  const isActive = (href: string) => location.pathname.startsWith(href);
 
   const currentNav = navItems.find((item) => isActive(item.href));
   const breadcrumbLabel = currentNav?.label ?? "Beranda";
@@ -92,10 +158,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <p className="text-sm font-semibold text-gray-900 truncate">
                   Halo, {user.name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">Mahasiswa</p>
+                <p className="text-xs text-gray-500 truncate capitalize">
+                  {user.role}
+                </p>
               </div>
               <button
-                onClick={handleLogout}
+                onClick={() => setShowLogoutConfirm(true)}
                 disabled={isLoggingOut}
                 className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
                 title="Logout"
@@ -138,6 +206,50 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Page Content */}
         <main className="flex-1 overflow-auto bg-gray-50">{children}</main>
       </div>
+
+      {/* Logout Confirm Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => !isLoggingOut && setShowLogoutConfirm(false)}
+          />
+
+          {/* Card */}
+          <div className="relative w-full max-w-sm rounded-2xl bg-white shadow-xl p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                <LogOut className="w-5 h-5 text-red-500" />
+              </div>
+              <h2 className="text-base font-bold text-gray-900">
+                Keluar dari akun?
+              </h2>
+              <p className="text-sm text-gray-500 mt-1.5">
+                Apakah Anda yakin ingin keluar? Anda perlu login kembali untuk
+                mengakses Smart Lecture.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 mt-6">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                disabled={isLoggingOut}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition disabled:opacity-50"
+              >
+                {isLoggingOut ? "Keluar..." : "Ya, Keluar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

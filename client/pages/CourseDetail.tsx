@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -26,6 +27,8 @@ import {
 
 export default function CourseDetail() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [activeTab, setActiveTab] = useState("transkripsi");
 
   const tabs = [
@@ -73,6 +76,22 @@ export default function CourseDetail() {
     34, 16,
   ];
 
+  const handleBack = () => {
+    switch (user?.role) {
+      case "admin":
+        navigate("/admin/dashboard");
+        break;
+
+      case "dosen":
+        navigate("/dosen/dashboard");
+        break;
+
+      default:
+        navigate("/dashboard");
+        break;
+    }
+  };
+
   return (
     <DashboardLayout>
       <div
@@ -90,7 +109,7 @@ export default function CourseDetail() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex items-center gap-3 lg:gap-4">
               <button
-                onClick={() => navigate("/dashboard")}
+                onClick={handleBack}
                 className="p-2.5 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors shrink-0"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-600" />

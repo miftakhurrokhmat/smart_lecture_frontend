@@ -14,9 +14,9 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      // biarkan handleSubmit yang menentukan redirect
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +28,22 @@ export default function Login() {
         setError("Email and password are required");
         return;
       }
-      await login(email, password);
-      navigate("/dashboard");
+      const user = await login(email, password);
+
+      switch (user.role) {
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+
+        case "dosen":
+          navigate("/dosen/dashboard");
+          break;
+
+        case "mahasiswa":
+        default:
+          navigate("/dashboard");
+          break;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

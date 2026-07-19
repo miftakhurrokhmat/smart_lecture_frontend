@@ -1,16 +1,23 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface User {
   id: string;
   email: string;
   name: string;
+  role: "admin" | "dosen" | "mahasiswa";
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -28,7 +35,9 @@ interface RegisterData {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,8 +55,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     setIsLoading(true);
+
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -57,26 +67,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Login failed");
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
 
       if (data.success && data.token && data.user) {
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("authUser", JSON.stringify(data.user));
+
         setToken(data.token);
         setUser(data.user);
-      } else {
-        throw new Error(data.message || "Login failed");
+
+        return data.user; // <-- WAJIB
       }
+
+      throw new Error(data.message || "Login failed");
     } catch (error) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("authUser");
+
       setToken(null);
       setUser(null);
+
       throw error;
     } finally {
       setIsLoading(false);
@@ -103,9 +117,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (responseData.success && responseData.user) {
         // Auto-login after registration
-        const loginToken = Buffer.from(
-          `${data.email}:${Date.now()}`
-        ).toString("base64");
+        const loginToken = Buffer.from(`${data.email}:${Date.now()}`).toString(
+          "base64",
+        );
         localStorage.setItem("authToken", loginToken);
         localStorage.setItem("authUser", JSON.stringify(responseData.user));
         setToken(loginToken);
