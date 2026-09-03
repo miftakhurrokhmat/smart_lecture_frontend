@@ -24,6 +24,7 @@ export interface LoginResponse {
     id: string;
     email: string;
     name: string;
+    role: "admin" | "dosen" | "mahasiswa";
   };
   message?: string;
 }
@@ -45,6 +46,7 @@ export interface RegisterResponse {
     id: string;
     email: string;
     name: string;
+    role: "admin" | "dosen" | "mahasiswa";
   };
 }
 

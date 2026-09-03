@@ -1,21 +1,75 @@
 import { RequestHandler } from "express";
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "@shared/api";
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from "@shared/api";
+
+type UserRole = "admin" | "dosen" | "mahasiswa";
+
+interface MockUser {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  role: UserRole;
+
+  // Mahasiswa
+  nim?: string;
+  program?: string;
+  gender?: string;
+
+  // Dosen
+  nidn?: string;
+  faculty?: string;
+}
 
 // Mock user database
-const mockUsers: Record<string, any> = {
+const mockUsers: Record<string, MockUser> = {
+  // Mahasiswa
   "minato@smartlecture.com": {
     id: "1",
     email: "minato@smartlecture.com",
     password: "password123",
     name: "Minato",
+    role: "mahasiswa",
     nim: "12345678",
     program: "Teknik Informatika",
     gender: "male",
   },
+
+  // Admin
+  "admin@smartlecture.com": {
+    id: "2",
+    email: "admin@smartlecture.com",
+    password: "admin123",
+    name: "Administrator",
+    role: "admin",
+  },
+
+  // Dosen
+  "dosen@smartlecture.com": {
+    id: "3",
+    email: "dosen@smartlecture.com",
+    password: "dosen123",
+    name: "Miftakhurrokhmat",
+    role: "dosen",
+    nidn: "0011223344",
+    faculty: "Fakultas Teknik",
+  },
 };
 
 // Mock sessions
-const sessions: Record<string, any> = {};
+const sessions: Record<
+  string,
+  {
+    userId: string;
+    email: string;
+    role: UserRole;
+    expiresAt: number;
+  }
+> = {};
 
 export const handleLogin: RequestHandler = (req, res) => {
   const { email, password } = req.body as LoginRequest;
@@ -38,10 +92,12 @@ export const handleLogin: RequestHandler = (req, res) => {
 
   // Create mock token
   const token = Buffer.from(`${email}:${Date.now()}`).toString("base64");
+
   sessions[token] = {
     userId: user.id,
     email: user.email,
-    expiresAt: Date.now() + 86400000, // 24 hours
+    role: user.role,
+    expiresAt: Date.now() + 86400000,
   };
 
   const response: LoginResponse = {
@@ -51,6 +107,7 @@ export const handleLogin: RequestHandler = (req, res) => {
       id: user.id,
       email: user.email,
       name: user.name,
+      role: user.role,
     },
   };
 
@@ -82,12 +139,12 @@ export const handleRegister: RequestHandler = (req, res) => {
     });
   }
 
-  // Create new user
-  const newUser = {
-    id: Math.random().toString(36).substr(2, 9),
+  const newUser: MockUser = {
+    id: Math.random().toString(36).substring(2, 11),
     email,
     password,
     name: fullName,
+    role: "mahasiswa",
     nim,
     program,
     gender,
@@ -97,9 +154,11 @@ export const handleRegister: RequestHandler = (req, res) => {
 
   // Create mock token
   const token = Buffer.from(`${email}:${Date.now()}`).toString("base64");
+
   sessions[token] = {
     userId: newUser.id,
     email: newUser.email,
+    role: newUser.role,
     expiresAt: Date.now() + 86400000,
   };
 
@@ -110,6 +169,7 @@ export const handleRegister: RequestHandler = (req, res) => {
       id: newUser.id,
       email: newUser.email,
       name: newUser.name,
+      role: newUser.role,
     },
   };
 

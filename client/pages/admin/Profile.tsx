@@ -4,10 +4,8 @@ import { Mail, User, BookOpen, Hash, Pencil } from "lucide-react";
 
 export default function Profile() {
   const user = {
-    name: "Minato",
-    email: "minato@smartlecture.com",
-    nim: "12345678",
-    prodi: "Teknik Informatika",
+    name: "Administrator",
+    email: "admin@smartlecture.com",
   };
 
   return (
@@ -68,15 +66,15 @@ export default function Profile() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Hash className="w-4 h-4 text-purple-500" />
-                    NIM
+                    NIDN
                   </label>
                   <input
                     type="text"
-                    value={user.nim}
+                    value={user.nidn}
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none"
                     disabled
                     readOnly
@@ -95,7 +93,7 @@ export default function Profile() {
                     readOnly
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">

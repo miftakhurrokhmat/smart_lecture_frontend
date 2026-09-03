@@ -14,8 +14,12 @@ import {
   Save,
   Bot,
   Lightbulb,
+  Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import Pengingat, { ReminderData } from "@/components/popup/Pengingat";
 
 interface Course {
   id: string;
@@ -37,6 +41,8 @@ interface Reminder {
   id: string;
   title: string;
   deadline: string;
+  time?: string;
+  status: "Aktif" | "Nonaktif";
   done: boolean;
 }
 
@@ -45,25 +51,71 @@ export default function Dashboard() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [ttsText, setTtsText] = useState("");
+
+  // Modal state untuk Pengingat
+  const [modalMode, setModalMode] = useState<"add" | "edit" | "delete" | null>(
+    null,
+  );
+  const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(
+    null,
+  );
+
   const [reminders, setReminders] = useState<Reminder[]>([
     {
       id: "1",
       title: "Kerjakan tugas Basis Data",
       deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
       done: false,
     },
     {
       id: "2",
       title: "Kerjakan tugas Basis Data",
       deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
       done: false,
     },
     {
       id: "3",
       title: "Kerjakan tugas Basis Data",
       deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
       done: false,
+    },
+    {
+      id: "4",
+      title: "Kerjakan tugas Basis Data",
+      deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
+      done: false,
+    },
+    {
+      id: "5",
+      title: "Kerjakan tugas Basis Data",
+      deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
+      done: false,
+    },
+    {
+      id: "6",
+      title: "Kerjakan tugas Basis Data",
+      deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
+      done: true,
+    },
+    {
+      id: "7",
+      title: "Kerjakan tugas Basis Data",
+      deadline: "20 Mei 2024",
+      time: "23:59",
+      status: "Aktif",
+      done: true,
     },
   ]);
   const { user } = useAuth();
@@ -98,6 +150,62 @@ export default function Dashboard() {
     setReminders((prev) =>
       prev.map((r) => (r.id === id ? { ...r, done: !r.done } : r)),
     );
+  };
+
+  // ==== Handler untuk popup Pengingat ====
+  const openAddReminder = () => {
+    setSelectedReminder(null);
+    setModalMode("add");
+  };
+
+  const openEditReminder = (reminder: Reminder) => {
+    setSelectedReminder(reminder);
+    setModalMode("edit");
+  };
+
+  const openDeleteReminder = (reminder: Reminder) => {
+    setSelectedReminder(reminder);
+    setModalMode("delete");
+  };
+
+  const closeReminderModal = () => {
+    setModalMode(null);
+    setSelectedReminder(null);
+  };
+
+  const handleSaveReminder = (data: ReminderData) => {
+    if (modalMode === "edit" && data.id) {
+      setReminders((prev) =>
+        prev.map((r) =>
+          r.id === data.id
+            ? {
+                ...r,
+                title: data.title,
+                deadline: data.deadline,
+                time: data.time,
+                status: data.status,
+              }
+            : r,
+        ),
+      );
+    } else {
+      setReminders((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          title: data.title,
+          deadline: data.deadline,
+          time: data.time,
+          status: data.status,
+          done: false,
+        },
+      ]);
+    }
+  };
+
+  const handleDeleteReminder = (id?: string) => {
+    if (!id) return;
+    setReminders((prev) => prev.filter((r) => r.id !== id));
   };
 
   const getActionButton = (course: Course) => {
@@ -165,12 +273,6 @@ export default function Dashboard() {
 
   const getCourseIcon = (icon?: string) =>
     courseIconMap[icon ?? ""] ?? ClipboardList;
-
-  const courseColors = [
-    { bg: "bg-blue-100", text: "text-blue-600" },
-    { bg: "bg-green-100", text: "text-green-600" },
-    { bg: "bg-purple-100", text: "text-purple-600" },
-  ];
 
   return (
     <DashboardLayout>
@@ -380,79 +482,171 @@ export default function Dashboard() {
 
             {/* RIGHT COLUMN */}
             <div className="w-full lg:w-[354px] shrink-0 flex flex-col gap-4">
-              {/* TTS Card */}
+              {/* Daftar Mahasiswa */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5">
-                <h3 className="font-bold text-gray-900 text-base">
-                  Ucapkan (TTS)
+                <h3 className="font-bold text-gray-900 text-lg mb-4">
+                  Daftar Mahasiswa
                 </h3>
-                <p className="text-sm text-gray-400 mt-1 mb-3">
-                  Ubah teks menjadi suara untuk berbicara
-                </p>
-                <textarea
-                  value={ttsText}
-                  onChange={(e) => setTtsText(e.target.value)}
-                  maxLength={300}
-                  placeholder="Tulis pesan anda disini..."
-                  className="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-700 placeholder-gray-300 resize-none focus:outline-none focus:border-purple-400 h-28"
-                />
-                <p className="text-right text-xs text-gray-300 mb-3">
-                  {ttsText.length}/300
-                </p>
-                <div className="border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3 mb-3 cursor-pointer hover:bg-gray-50">
-                  <Volume2 className="w-5 h-5 text-purple-500 shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900">
-                      Suara Perempuan
-                    </p>
-                    <p className="text-xs text-gray-400">Indonesia</p>
-                  </div>
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
-                </div>
-                <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-base flex items-center justify-center gap-2 transition-colors">
-                  <Volume2 className="w-5 h-5" />
-                  Ucapkan
-                </button>
-              </div>
 
-              {/* Pengingat Card */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <Bell className="w-5 h-5 text-gray-700" />
-                  <h3 className="font-bold text-gray-900 text-base">
-                    Pengingat
-                  </h3>
-                </div>
-                <div className="flex flex-col gap-4">
-                  {reminders.map((r) => (
-                    <div key={r.id} className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={r.done}
-                        onChange={() => toggleReminder(r.id)}
-                        className="mt-0.5 accent-purple-600 cursor-pointer w-4 h-4 shrink-0"
-                      />
-                      <div>
-                        <p
-                          className={`text-sm font-semibold ${r.done ? "line-through text-gray-400" : "text-gray-900"}`}
-                        >
-                          {r.title}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          Deadline: {r.deadline}
-                        </p>
+                <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
+                  {[
+                    {
+                      id: 1,
+                      name: "Manone Nama",
+                      avatar: "https://i.pravatar.cc/100?img=1",
+                      active: true,
+                    },
+                    {
+                      id: 2,
+                      name: "Hada Harane",
+                      avatar: "https://i.pravatar.cc/100?img=2",
+                      active: true,
+                    },
+                    {
+                      id: 3,
+                      name: "Nemz Ave",
+                      avatar: "https://i.pravatar.cc/100?img=3",
+                      active: true,
+                    },
+                    {
+                      id: 4,
+                      name: "Ken Aven",
+                      avatar: "https://i.pravatar.cc/100?img=4",
+                      active: false,
+                    },
+                    {
+                      id: 5,
+                      name: "Lucy Aveira",
+                      avatar: "https://i.pravatar.cc/100?img=5",
+                      active: true,
+                    },
+                    {
+                      id: 6,
+                      name: "Acy Lakan",
+                      avatar: "https://i.pravatar.cc/100?img=6",
+                      active: false,
+                    },
+                  ].map((student) => (
+                    <div
+                      key={student.id}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={student.avatar}
+                          alt={student.name}
+                          className="w-11 h-11 rounded-full object-cover"
+                        />
+
+                        <span className="text-sm font-medium text-gray-800">
+                          {student.name}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`flex items-center gap-1 text-xs font-semibold ${
+                          student.active ? "text-green-600" : "text-red-500"
+                        }`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            student.active ? "bg-green-500" : "bg-red-500"
+                          }`}
+                        />
+                        {student.active ? "Aktif" : "Tidak Aktif"}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              {/* Promo Card */}
-              <div className="rounded-2xl overflow-hidden w-full h-48 sm:h-50 lg:h-50">
-                <img
-                  src="/assets/info.png"
-                  alt="Belajar inklusif, setiap kata berarti"
-                  className="w-full h-full object-cover"
-                />
+
+              {/* Pengingat */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-5 h-5 text-purple-600" />
+
+                    <h3 className="font-bold text-gray-900 text-base">
+                      Pengingat
+                    </h3>
+                  </div>
+
+                  <button
+                    onClick={openAddReminder}
+                    className="w-8 h-8 rounded-lg bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center transition"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-4 max-h-[340px] overflow-y-auto pr-1">
+                  {reminders.length === 0 && (
+                    <p className="text-sm text-gray-400 text-center py-4">
+                      Belum ada pengingat
+                    </p>
+                  )}
+
+                  {reminders.map((r) => (
+                    <div key={r.id} className="flex items-start gap-3 group">
+                      <input
+                        type="checkbox"
+                        checked={r.done}
+                        onChange={() => toggleReminder(r.id)}
+                        className="mt-1 accent-purple-600"
+                      />
+
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className={`font-semibold text-sm ${
+                            r.done ? "line-through text-gray-400" : ""
+                          }`}
+                        >
+                          {r.title}
+                        </p>
+
+                        <p className="text-xs text-gray-400">
+                          Deadline: {r.deadline}
+                          {r.time ? `, ${r.time}` : ""}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => openEditReminder(r)}
+                          className="w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-purple-600 flex items-center justify-center transition"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          onClick={() => openDeleteReminder(r)}
+                          className="w-7 h-7 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              <Pengingat
+                open={modalMode !== null}
+                mode={modalMode ?? "add"}
+                initialData={
+                  selectedReminder
+                    ? {
+                        id: selectedReminder.id,
+                        title: selectedReminder.title,
+                        deadline: selectedReminder.deadline,
+                        time: selectedReminder.time,
+                        status: selectedReminder.status,
+                      }
+                    : undefined
+                }
+                onClose={closeReminderModal}
+                onSave={handleSaveReminder}
+                onDelete={handleDeleteReminder}
+              />
             </div>
           </div>
         </div>

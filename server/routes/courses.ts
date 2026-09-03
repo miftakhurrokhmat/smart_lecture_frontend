@@ -1,5 +1,11 @@
 import { RequestHandler } from "express";
-import { DashboardResponse, CourseDetailResponse, Course, CourseDetail, Transcript } from "@shared/api";
+import {
+  DashboardResponse,
+  CourseDetailResponse,
+  Course,
+  CourseDetail,
+  Transcript,
+} from "@shared/api";
 
 // Mock courses database
 const mockCourses: Record<string, Course> = {
@@ -98,7 +104,10 @@ export const handleGetCourses: RequestHandler = (req, res) => {
   });
 };
 
-export const handleGetCourseById: RequestHandler = (req, res) => {
+export const handleGetCourseById: RequestHandler<{ courseId: string }> = (
+  req,
+  res,
+) => {
   const { courseId } = req.params;
 
   const course = mockCourses[courseId];
@@ -127,7 +136,9 @@ export const handleGetCourseById: RequestHandler = (req, res) => {
   res.status(200).json(response);
 };
 
-export const handleGetCourseTranscripts: RequestHandler = (req, res) => {
+export const handleGetCourseTranscripts: RequestHandler<{
+  courseId: string;
+}> = (req, res) => {
   const { courseId } = req.params;
 
   const transcripts = mockTranscripts[courseId] || [];

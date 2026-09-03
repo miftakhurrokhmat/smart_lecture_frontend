@@ -1,6 +1,7 @@
 # Smart Lecture API Documentation
 
 ## Base URL
+
 ```
 http://localhost:8080/api
 ```
@@ -8,9 +9,11 @@ http://localhost:8080/api
 ## Authentication Endpoints
 
 ### Login
+
 **POST** `/auth/login`
 
 Request body:
+
 ```json
 {
   "email": "minato@smartlecture.com",
@@ -19,6 +22,7 @@ Request body:
 ```
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -26,7 +30,8 @@ Response (200):
   "user": {
     "id": "1",
     "email": "minato@smartlecture.com",
-    "name": "Minato"
+    "name": "Minato",
+    "role": "mahasiswa"
   }
 }
 ```
@@ -34,9 +39,11 @@ Response (200):
 ---
 
 ### Register
+
 **POST** `/auth/register`
 
 Request body:
+
 ```json
 {
   "nim": "12345678",
@@ -50,6 +57,7 @@ Request body:
 ```
 
 Response (201):
+
 ```json
 {
   "success": true,
@@ -65,14 +73,17 @@ Response (201):
 ---
 
 ### Logout
+
 **POST** `/auth/logout`
 
 Headers:
+
 ```
 Authorization: Bearer <token>
 ```
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -85,9 +96,11 @@ Response (200):
 ## Course Endpoints
 
 ### Get Dashboard
+
 **GET** `/dashboard`
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -113,9 +126,11 @@ Response (200):
 ---
 
 ### Get All Courses
+
 **GET** `/courses`
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -137,9 +152,11 @@ Response (200):
 ---
 
 ### Get Course by ID
+
 **GET** `/courses/:courseId`
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -165,9 +182,11 @@ Response (200):
 ---
 
 ### Get Course Transcripts
+
 **GET** `/courses/:courseId/transcripts`
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -187,9 +206,11 @@ Response (200):
 ## User Endpoints
 
 ### Get Profile
+
 **GET** `/user/profile?userId=1`
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -207,9 +228,11 @@ Response (200):
 ---
 
 ### Update Profile
+
 **PUT** `/user/profile?userId=1`
 
 Request body:
+
 ```json
 {
   "name": "Minato Updated",
@@ -219,6 +242,7 @@ Request body:
 ```
 
 Response (200):
+
 ```json
 {
   "success": true,
@@ -238,6 +262,7 @@ Response (200):
 ## Mock User Credentials
 
 For testing login:
+
 ```
 Email: minato@smartlecture.com
 Password: password123
@@ -256,6 +281,7 @@ Password: password123
 ## Error Responses
 
 ### Bad Request (400)
+
 ```json
 {
   "success": false,
@@ -264,6 +290,7 @@ Password: password123
 ```
 
 ### Unauthorized (401)
+
 ```json
 {
   "success": false,
@@ -272,6 +299,7 @@ Password: password123
 ```
 
 ### Conflict (409)
+
 ```json
 {
   "success": false,
@@ -280,6 +308,7 @@ Password: password123
 ```
 
 ### Not Found (404)
+
 ```json
 {
   "success": false,
