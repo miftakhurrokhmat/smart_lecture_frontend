@@ -117,7 +117,7 @@ export default function Dashboard() {
 
             <div className="relative">
               <h1 className="text-xl lg:text-2xl font-bold text-white">
-                Halo, {user.name}! 👋
+                Halo, {user.name}!
               </h1>
               <p className="text-purple-100 text-sm mt-1">
                 Kelola akun dosen dan mahasiswa yang terdaftar di Smart Lecture

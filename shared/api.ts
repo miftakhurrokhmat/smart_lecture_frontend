@@ -11,6 +11,8 @@ export interface DemoResponse {
   message: string;
 }
 
+export type UserRole = "admin" | "dosen" | "mahasiswa";
+
 // Auth Types
 export interface LoginRequest {
   email: string;

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Download, Plus, ClipboardList } from "lucide-react";
+import { Download, Plus, ClipboardList, BookOpen } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/table/DataTable";
 import Badge from "@/components/table/Badge";
@@ -12,7 +12,7 @@ import ConfirmDeleteModal from "@/components/modal/DeleteModal";
 interface MataKuliah {
   id: string;
   nama: string;
-  icon: string;
+  icon?: string;
   sks: number;
   kodeKelas: string;
   programStudi: "Informatika" | "Sistem Informasi" | "Keamanan Informasi";
@@ -34,7 +34,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "1",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 3,
     kodeKelas: "TI-3A",
     programStudi: "Informatika",
@@ -44,7 +43,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "2",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 3,
     kodeKelas: "TI-3A",
     programStudi: "Informatika",
@@ -54,7 +52,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "3",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 2,
     kodeKelas: "TI-3A",
     programStudi: "Sistem Informasi",
@@ -64,7 +61,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "4",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 4,
     kodeKelas: "TI-3A",
     programStudi: "Sistem Informasi",
@@ -74,7 +70,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "5",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 2,
     kodeKelas: "TI-3A",
     programStudi: "Keamanan Informasi",
@@ -84,7 +79,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "6",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 2,
     kodeKelas: "TI-3A",
     programStudi: "Keamanan Informasi",
@@ -94,7 +88,6 @@ const DUMMY_DATA: MataKuliah[] = [
   {
     id: "7",
     nama: "Kesetaraan Informasi AI",
-    icon: "🧑‍💻",
     sks: 2,
     kodeKelas: "TI-3A",
     programStudi: "Keamanan Informasi",
@@ -168,8 +161,8 @@ export default function MataKuliah() {
       sortable: true,
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center text-sm shrink-0">
-            {row.icon}
+          <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-sm shrink-0">
+            <BookOpen className="w-4 h-4 text-purple-600" />
           </div>
           <span className="font-semibold text-gray-800">{row.nama}</span>
         </div>

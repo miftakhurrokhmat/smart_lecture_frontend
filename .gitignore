@@ -1,5 +1,62 @@
+# ==============================================================================
+# SMART LECTURE FRONTEND .GITIGNORE
+# ==============================================================================
+
+# Credentials, Keys & Environment Variables
+.env
+.env.*
+!.env.example
+*.env
+*.env.*
+!*.env.example
+apiai/.env
+apiai/.env.*
+!apiai/.env.example
+*.pem
+*.key
+*.cert
+credentials.json
+secrets.json
+
+# Agent & AI Workspace Tooling (Caveman, Antigravity, Forge, dll)
+.agents/
+.agents
+.forge/
+.forge
+skills-lock.json
+.gemini/
+.cursor/
+
+# Node Dependencies & Package Managers
+node_modules/
+dist/
+dist-ssr/
+.pnpm-store/
+*.local
+
+# AI Service (FastAPI / Python)
+apiai/venv/
+apiai/.venv/
+apiai/__pycache__/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+
+# Uploads & User Generated Files
+uploads/*
+!uploads/.gitkeep
+
+# Builder & Tooling Caches
+.builder/
+.config/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,23 +64,19 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# Editor & Operating System Artifacts
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.idea/
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-.config/
-!.env
-*.pyc
-/apiai/venv

@@ -81,10 +81,10 @@ export default function Login() {
           </div>
 
           {/* Form area - centered */}
-          <div className="flex-1 flex items-center justify-center px-6 py-8 lg:px-14 xl:px-20">
+          <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 lg:px-14 xl:px-20">
             <div className="w-full max-w-[400px]">
               {/* Title */}
-              <h2 className="text-2xl text-center lg:text-3xl xl:text-[32px] font-bold text-gray-900 mb-6 whitespace-nowrap">
+              <h2 className="text-2xl text-center lg:text-3xl xl:text-[32px] font-bold text-gray-900 mb-6 whitespace-normal sm:whitespace-nowrap">
                 Masuk ke <span className="text-purple-600">Smart Lecture</span>
               </h2>
               <p className="text-center text-[14px] font-bold leading-[20px] tracking-[0.05em] text-gray-500 mb-8">

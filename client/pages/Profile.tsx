@@ -33,11 +33,11 @@ export default function Profile() {
             {/* Cover accent */}
             <div className="h-24 w-full bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600" />
 
-            <div className="px-8 pb-8 -mt-12 flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
+            <div className="px-5 sm:px-8 pb-6 sm:pb-8 -mt-12 flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
               <div className="w-24 h-24 shrink-0 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold ring-4 ring-white shadow-lg">
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <div className="pb-7">
+              <div className="pb-2 sm:pb-7">
                 <h2 className="text-2xl font-bold text-white">{user.name}</h2>
                 <p className="flex items-center gap-1.5 text-gray-900 text-sm mt-1">
                   <Mail className="w-4 h-4" />
@@ -48,7 +48,7 @@ export default function Profile() {
           </div>
 
           {/* Details card */}
-          <div className="rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-xl p-8">
+          <div className="rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 shadow-xl p-5 sm:p-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
               Informasi Akun
             </h3>

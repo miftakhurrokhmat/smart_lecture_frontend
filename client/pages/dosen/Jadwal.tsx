@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Download, Plus, FileText } from "lucide-react";
+import { Download, Plus, FileText, BookOpen } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/table/DataTable";
 import Badge from "@/components/table/Badge";
@@ -12,7 +12,7 @@ import ConfirmDeleteModal from "@/components/modal/DeleteModal";
 interface Kelas {
   id: string;
   nama: string;
-  icon: string;
+  icon?: string;
   kode: string;
   programStudi: "Informatika" | "Sistem Informasi" | "Keamanan Informasi";
   aktif: boolean;
@@ -30,7 +30,6 @@ const DUMMY_DATA: Kelas[] = [
   {
     id: "1",
     nama: "Sistem Informasi Manajemen",
-    icon: "🧑‍💻",
     kode: "TI-3A",
     programStudi: "Informatika",
     aktif: true,
@@ -39,7 +38,6 @@ const DUMMY_DATA: Kelas[] = [
   {
     id: "2",
     nama: "Sistem Informasi Manajemen",
-    icon: "🧑‍💻",
     kode: "TI-3A",
     programStudi: "Informatika",
     aktif: false,
@@ -48,7 +46,6 @@ const DUMMY_DATA: Kelas[] = [
   {
     id: "3",
     nama: "Basis Data",
-    icon: "🧑‍💻",
     kode: "TI-3C",
     programStudi: "Sistem Informasi",
     aktif: true,
@@ -57,7 +54,6 @@ const DUMMY_DATA: Kelas[] = [
   {
     id: "4",
     nama: "Basis Data",
-    icon: "🧑‍💻",
     kode: "TI-3C",
     programStudi: "Sistem Informasi",
     aktif: false,
@@ -66,7 +62,6 @@ const DUMMY_DATA: Kelas[] = [
   {
     id: "5",
     nama: "Basis Data",
-    icon: "🧑‍💻",
     kode: "TI-3C",
     programStudi: "Keamanan Informasi",
     aktif: true,
@@ -106,8 +101,8 @@ export default function Jadwal() {
       sortable: true,
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center text-sm shrink-0">
-            {row.icon}
+          <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-sm shrink-0">
+            <BookOpen className="w-4 h-4 text-purple-600" />
           </div>
           <span className="font-semibold text-gray-800">{row.nama}</span>
         </div>

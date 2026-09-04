@@ -265,14 +265,7 @@ export default function Dashboard() {
     },
   ];
 
-  const courseIconMap: Record<string, React.ElementType> = {
-    "📋": ClipboardList,
-    "💾": Save,
-    "🤖": Bot,
-  };
-
-  const getCourseIcon = (icon?: string) =>
-    courseIconMap[icon ?? ""] ?? ClipboardList;
+  const getCourseIcon = (_icon?: string) => ClipboardList;
 
   return (
     <DashboardLayout>
@@ -290,7 +283,7 @@ export default function Dashboard() {
           {/* Welcome */}
           <div>
             <h1 className="text-2xl lg:text-4xl font-bold text-gray-900">
-              Halo, {user.name}! 👋
+              Halo, {user.name}!
             </h1>
             <p className="text-purple-600 font-semibold mt-1 text-sm lg:text-lg">
               Semangat belajar hari ini, jangan lupa tetap fokus ya!

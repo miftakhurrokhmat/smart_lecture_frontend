@@ -194,7 +194,7 @@ export default function CourseDetail() {
           {/* Main content: kiri Transkripsi (full height), kanan PDF + (Ringkasan/Diskusi) */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-stretch">
             {/* LEFT: Transkripsi - tinggi penuh */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-4 lg:p-5 flex flex-col gap-3 h-[480px] lg:h-full">
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-4 lg:p-5 flex flex-col gap-3 h-[420px] lg:h-full min-h-0">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <p className="text-sm font-semibold text-gray-900">
                   Transkripsi berlangsung secara real time
@@ -277,7 +277,7 @@ export default function CourseDetail() {
                       <p className="text-xs text-gray-400">2.4 mb</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <button className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
                       <Download className="w-3.5 h-3.5" />
                       Download

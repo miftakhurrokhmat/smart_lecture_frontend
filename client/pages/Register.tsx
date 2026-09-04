@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { getRoleDashboard } from "@/lib/roles";
 
 export default function Register() {
   type Gender = "male" | "female";
@@ -32,11 +33,11 @@ export default function Register() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { register, isAuthenticated } = useAuth();
+  const { register, isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/dashboard");
-  }, [isAuthenticated, navigate]);
+    if (isAuthenticated && user) navigate(getRoleDashboard(user.role));
+  }, [isAuthenticated, user, navigate]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -79,6 +80,7 @@ export default function Register() {
         return;
       }
       await register(formData);
+      // register default = mahasiswa, redirect sesuai role
       navigate("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
@@ -114,7 +116,7 @@ export default function Register() {
           </div>
 
           {/* Form area */}
-          <div className="flex-1 flex items-center justify-center px-6 py-8 lg:px-14 xl:px-20">
+          <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 lg:px-14 xl:px-20">
             <div className="w-full max-w-[400px]">
               {/* Title */}
               <h2 className="text-2xl text-center lg:text-3xl xl:text-[32px] font-bold text-gray-900 mb-6">
@@ -132,7 +134,7 @@ export default function Register() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* NIM & Program Studi */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
                       htmlFor="nim"

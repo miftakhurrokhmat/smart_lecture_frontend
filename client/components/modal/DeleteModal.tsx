@@ -1,8 +1,8 @@
-import { X, Trash2 } from "lucide-react";
+import { X, Trash2, Folder } from "lucide-react";
 
 interface ItemPreview {
   avatar?: string;
-  icon?: string;
+  icon?: React.ReactNode;
   title: string;
   subtitle: string;
 }
@@ -34,25 +34,37 @@ export default function ConfirmDeleteModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-[380px] bg-white rounded-2xl shadow-xl p-6">
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* Modal dialog */}
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 z-10 text-center animate-in fade-in zoom-in-95 duration-150">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Trash icon */}
+        <div className="mx-auto w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-4">
+          <Trash2 className="w-7 h-7 text-red-500" />
         </div>
 
-        <div className="flex flex-col items-center text-center -mt-2">
-          <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mb-4">
-            <Trash2 className="w-6 h-6 text-red-500" />
-          </div>
-          <h3 className="font-bold text-gray-900 text-base mb-2">{title}</h3>
-          <p className="text-sm text-gray-400 leading-relaxed">{description}</p>
+        {/* Title */}
+        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+
+        {/* Description */}
+        <div className="mt-2 text-sm text-gray-500 leading-relaxed">
+          {description}
         </div>
 
+        {/* Optional item preview card */}
         {itemPreview && (
           <div className="mt-5 bg-gray-50 rounded-xl p-3 flex items-center gap-3">
             {itemPreview.avatar ? (
@@ -62,8 +74,8 @@ export default function ConfirmDeleteModal({
                 className="w-9 h-9 rounded-lg object-cover shrink-0"
               />
             ) : (
-              <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-sm shrink-0">
-                {itemPreview.icon ?? "📁"}
+              <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-sm shrink-0 text-white">
+                {itemPreview.icon ?? <Folder className="w-4 h-4 text-gray-300" />}
               </div>
             )}
             <div className="min-w-0 text-left">

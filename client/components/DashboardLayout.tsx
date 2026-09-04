@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Bell,
   HelpCircle,
@@ -9,6 +9,13 @@ import {
   GraduationCap,
   BookOpen,
   Users,
+  MessageSquare,
+  FileText,
+  BarChart3,
+  Settings,
+  Menu,
+  X,
+  Building2,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,9 +29,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -63,6 +75,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             href: "/admin/matakuliah",
           },
           {
+            icon: Building2,
+            label: "Program Studi",
+            href: "/admin/prodi",
+          },
+          {
+            icon: Users,
+            label: "Manajemen Kelas",
+            href: "/admin/kelas",
+          },
+          {
             icon: User,
             label: "Profile",
             href: "/admin/profile",
@@ -81,6 +103,31 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               href: "/dosen/jadwal",
             },
             {
+              icon: FileText,
+              label: "Materi",
+              href: "/dosen/materi",
+            },
+            {
+              icon: MessageSquare,
+              label: "Diskusi",
+              href: "/dosen/diskusi",
+            },
+            {
+              icon: Users,
+              label: "Mahasiswa",
+              href: "/dosen/mahasiswa",
+            },
+            {
+              icon: BarChart3,
+              label: "Laporan",
+              href: "/dosen/laporan",
+            },
+            {
+              icon: Settings,
+              label: "Pengaturan",
+              href: "/dosen/pengaturan",
+            },
+            {
               icon: User,
               label: "Profile",
               href: "/dosen/profile",
@@ -91,6 +138,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               icon: Home,
               label: "Beranda",
               href: "/dashboard",
+            },
+            {
+              icon: MessageSquare,
+              label: "Diskusi",
+              href: "/diskusi",
             },
             {
               icon: User,
@@ -105,8 +157,100 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar — always visible, fixed width */}
-      <aside className="w-56 bg-white border-r border-gray-200 flex flex-col shrink-0">
+      {/* Mobile Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+
+          {/* Drawer Sidebar */}
+          <aside className="relative w-64 max-w-[80vw] bg-white h-full flex flex-col shadow-2xl z-10">
+            {/* Logo & Close Button */}
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <img
+                  src="/assets/Logo.png"
+                  alt="Smart Lecture Logo"
+                  className="w-8 h-8 object-contain"
+                />
+                <span className="font-bold text-gray-900 text-base whitespace-nowrap">
+                  Smart <span className="text-purple-600">Lecture</span>
+                </span>
+              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                title="Tutup Menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Nav */}
+            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      active
+                        ? "bg-purple-50 text-purple-700"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 shrink-0 ${
+                        active ? "text-purple-600" : "text-gray-400"
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* User Info + Logout */}
+            {user && (
+              <div className="px-3 py-4 border-t border-gray-100">
+                <div className="flex items-center gap-3 px-2">
+                  <div className="w-9 h-9 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0">
+                    {user.name[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 truncate">
+                      Halo, {user.name}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate capitalize">
+                      {user.role}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setShowLogoutConfirm(true);
+                    }}
+                    disabled={isLoggingOut}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                    title="Logout"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </aside>
+        </div>
+      )}
+
+      {/* Desktop Sidebar — hidden on mobile */}
+      <aside className="hidden md:flex w-56 bg-white border-r border-gray-200 flex-col shrink-0">
         {/* Logo */}
         <div className="px-5 py-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
@@ -176,18 +320,28 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top Navbar */}
-        <header className="bg-white border-b border-gray-200 px-5 py-3 flex items-center justify-between shrink-0">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
-            <span className="text-gray-400">Smart Lecture</span>
-            <span className="text-gray-300">/</span>
-            <span className="text-gray-700 font-medium">{breadcrumbLabel}</span>
+        <header className="bg-white border-b border-gray-200 px-4 sm:px-5 py-3 flex items-center justify-between shrink-0">
+          {/* Left: Mobile hamburger button + Breadcrumb */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-1.5 -ml-1 rounded-lg text-gray-600 hover:bg-gray-100 md:hidden shrink-0 transition-colors"
+              title="Buka Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-1.5 text-sm text-gray-500 min-w-0 truncate">
+              <span className="text-gray-400 shrink-0 hidden sm:inline">Smart Lecture</span>
+              <span className="text-gray-300 shrink-0 hidden sm:inline">/</span>
+              <span className="text-gray-700 font-medium truncate">{breadcrumbLabel}</span>
+            </div>
           </div>
 
           {/* Right: actions */}
-          <div className="flex items-center gap-1 mr-3">
+          <div className="flex items-center gap-1">
             <button
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
               title="Notifikasi"

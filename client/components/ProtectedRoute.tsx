@@ -1,13 +1,19 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { getRoleDashboard } from "@/lib/roles";
+import type { UserRole } from "@shared/api";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  allowedRoles?: UserRole[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  allowedRoles,
+}) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return (
@@ -20,8 +26,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Role check — redirect to user's own dashboard if not allowed
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to={getRoleDashboard(user.role)} replace />;
   }
 
   return <>{children}</>;
